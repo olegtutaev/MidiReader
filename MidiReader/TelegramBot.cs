@@ -12,12 +12,17 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Net.Http;
 //using NAudio.Vorbis;
+//using OpusDotNet;
+using Concentus;
+using Concentus.Oggfile;
+using Concentus.Structs;
+//using OpusDotNet;
 
 namespace MidiReader
 {
   public class TelegramBot
   {
-    private TelegramBotClient client;
+    private static TelegramBotClient client;
     private static string folder;
 
     public TelegramBot(string token)
@@ -88,30 +93,10 @@ namespace MidiReader
 
         if (message.Voice != null)
         {
-          string oggFilePath = "C3.ogg";
-          string wavFilePath = "C1.wav";
-          var botToken = BotToken.Token;
+          string filePath  = "C1.ogg";
           folder = "voice";
 
-          var file = await botClient.GetFileAsync(message.Voice.FileId);
-          //file.FilePath = "C1.ogg";
-
-          using (var httpClient = new HttpClient())
-          {
-            var fileUrl = $"https://api.telegram.org/file/bot{BotToken.Token}/{"C1.ogg"}";
-            var response = await httpClient.GetAsync(fileUrl);
-            using (var fileOutput = System.IO.File.Create(oggFilePath))
-            {
-              await response.Content.CopyToAsync(fileOutput);
-            }
-          }
-
-          //string tempWavFilePath = "temp.wav";
-          //Program.ConvertOggToWav(oggFilePath, tempWavFilePath);
-
-          // Перемещаем временный WAV файл в итоговую позицию
-          //System.IO.File.Move(tempWavFilePath, wavFilePath);
-
+          await DownloadVoiceMessage(update.Message.Voice.FileId);
           Console.WriteLine("Voice message saved");
           await botClient.SendTextMessageAsync(message.Chat.Id, "Голосовуха сохранена", replyMarkup: replyKeyboardMarkup);
         }
@@ -133,6 +118,16 @@ namespace MidiReader
       return folder;
 
 
+    }
+
+    private static async Task DownloadVoiceMessage(string fileId)
+    {
+      var voiceMessage = await client.GetFileAsync(fileId);
+
+      using (var fileStream = new FileStream("C1.ogg", FileMode.Create))
+      {
+        await client.DownloadFileAsync(voiceMessage.FilePath, fileStream);
+      }
     }
   }
 }

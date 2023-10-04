@@ -40,6 +40,14 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Concentus": {
+              "target": "Package",
+              "version": "[1.1.7, )"
+            },
+            "Concentus.OggFile": {
+              "target": "Package",
+              "version": "[1.0.4, )"
+            },
             "NAudio": {
               "target": "Package",
               "version": "[2.2.1, )"

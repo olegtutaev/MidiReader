@@ -7,9 +7,96 @@ namespace MidiReader
     private static string folder = "piano";
     private static int deviceNumber;
 
+    private static byte[] CreateWavHeader(int dataSize)
+    {
+      int totalSize = 36 + dataSize; // Размер всего файла = размер заголовка (36 байт) + размер данных
+      int audioFormat = 1; // PCM формат аудио данных
+      int numChannels = 1; // Количество каналов (моно)
+      int sampleRate = 16000; // Частота дискретизации
+      int bitsPerSample = 16; // Разрядность (бит на сэмпл)
+
+      byte[] header = new byte[44];
+
+      // Chunk ID
+      header[0] = (byte)'R';
+      header[1] = (byte)'I';
+      header[2] = (byte)'F';
+      header[3] = (byte)'F';
+
+      // Chunk Size
+      header[4] = (byte)(totalSize & 0xFF);
+      header[5] = (byte)((totalSize >> 8) & 0xFF);
+      header[6] = (byte)((totalSize >> 16) & 0xFF);
+      header[7] = (byte)((totalSize >> 24) & 0xFF);
+
+      // Format
+      header[8] = (byte)'W';
+      header[9] = (byte)'A';
+      header[10] = (byte)'V';
+      header[11] = (byte)'E';
+
+      // Subchunk 1 ID
+      header[12] = (byte)'f';
+      header[13] = (byte)'m';
+      header[14] = (byte)'t';
+      header[15] = (byte)' ';
+
+      // Subchunk 1 Size
+      header[16] = 16;
+      header[17] = 0;
+      header[18] = 0;
+      header[19] = 0;
+
+      // Audio Format
+      header[20] = (byte)(audioFormat & 0xFF);
+      header[21] = (byte)((audioFormat >> 8) & 0xFF);
+
+      // Num Channels
+      header[22] = (byte)(numChannels & 0xFF);
+      header[23] = (byte)((numChannels >> 8) & 0xFF);
+
+      // Sample Rate
+      header[24] = (byte)(sampleRate & 0xFF);
+      header[25] = (byte)((sampleRate >> 8) & 0xFF);
+      header[26] = (byte)((sampleRate >> 16) & 0xFF);
+      header[27] = (byte)((sampleRate >> 24) & 0xFF);
+
+      // Byte Rate
+      int byteRate = sampleRate * numChannels * bitsPerSample / 8;
+      header[28] = (byte)(byteRate & 0xFF);
+      header[29] = (byte)((byteRate >> 8) & 0xFF);
+      header[30] = (byte)((byteRate >> 16) & 0xFF);
+      header[31] = (byte)((byteRate >> 24) & 0xFF);
+
+      // Block Align
+      int blockAlign = numChannels * bitsPerSample / 8;
+      header[32] = (byte)(blockAlign & 0xFF);
+      header[33] = (byte)((blockAlign >> 8) & 0xFF);
+
+      // Bits Per Sample
+      header[34] = (byte)(bitsPerSample & 0xFF);
+      header[35] = (byte)((bitsPerSample >> 8) & 0xFF);
+
+      // Subchunk 2 ID
+      header[36] = (byte)'d';
+      header[37] = (byte)'a';
+      header[38] = (byte)'t';
+      header[39] = (byte)'a';
+
+      // Subchunk 2 Size
+      header[40] = (byte)(dataSize & 0xFF);
+      header[41] = (byte)((dataSize >> 8) & 0xFF);
+      header[42] = (byte)((dataSize >> 16) & 0xFF);
+      header[43] = (byte)((dataSize >> 24) & 0xFF);
+
+      return header;
+    }
+
+
     public static void Main()
     {
       var bot = new TelegramBot(BotToken.Token);
+
       bot.Start();
 
       MidiDeviceLister deviceLister = new MidiDeviceLister();

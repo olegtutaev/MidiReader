@@ -48,3 +48,5 @@ C:\Users\Oleg\Desktop\MidiReader\MidiReader\obj\Debug\net6.0\refint\MidiReader.d
 C:\Users\Oleg\Desktop\MidiReader\MidiReader\obj\Debug\net6.0\MidiReader.pdb
 C:\Users\Oleg\Desktop\MidiReader\MidiReader\obj\Debug\net6.0\MidiReader.genruntimeconfig.cache
 C:\Users\Oleg\Desktop\MidiReader\MidiReader\obj\Debug\net6.0\ref\MidiReader.dll
+D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\Concentus.dll
+D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\Concentus.Oggfile.dll
