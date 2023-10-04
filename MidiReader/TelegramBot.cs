@@ -87,7 +87,7 @@ namespace MidiReader
         if (message.Voice != null)
         {
           string oggFilePath = "C1.ogg";
-          string wavFilePath = "C1.wav";
+          //string wavFilePath = "C1.wav";
           var botToken = BotToken.Token;
           folder = "voice";
 
