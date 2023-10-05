@@ -36,6 +36,38 @@ namespace MidiReader
       client.StartReceiving(Update, Error);
     }
 
+    public static void ConvertOggToWav()
+    {
+      //var filePath = $@"C:\Users\blabla\foo\bar\";
+      var fileOgg = "C3.ogg";
+      var fileWav = "C3.wav";
+
+      using (FileStream fileIn = new FileStream($"{fileOgg}", FileMode.Open))
+      using (MemoryStream pcmStream = new MemoryStream())
+      {
+        Concentus.Structs.OpusDecoder decoder = new Concentus.Structs.OpusDecoder(48000, 1);
+        OpusOggReadStream oggIn = new OpusOggReadStream(decoder, fileIn);
+
+        while (oggIn.HasNextPacket)
+        {
+          short[] packet = oggIn.DecodeNextPacket();
+          if (packet != null)
+          {
+            for (int i = 0; i < packet.Length; i++)
+            {
+              var bytes = BitConverter.GetBytes(packet[i]);
+              pcmStream.Write(bytes, 0, bytes.Length);
+            }
+          }
+        }
+        pcmStream.Position = 0;
+        var wavStream = new RawSourceWaveStream(pcmStream, new WaveFormat(44100, 1));
+        var sampleProvider = wavStream.ToSampleProvider();
+        WaveFileWriter.CreateWaveFile16($"{fileWav}", sampleProvider);
+      }
+    }
+
+
     async static Task Update(ITelegramBotClient botClient, Update update, CancellationToken token)
     {
 
@@ -93,12 +125,17 @@ namespace MidiReader
 
         if (message.Voice != null)
         {
-          string filePath  = "C1.ogg";
+          //string filePath  = "C1.ogg";
           folder = "voice";
 
           await DownloadVoiceMessage(update.Message.Voice.FileId);
-          Console.WriteLine("Voice message saved");
-          await botClient.SendTextMessageAsync(message.Chat.Id, "Голосовуха сохранена", replyMarkup: replyKeyboardMarkup);
+          await botClient.SendTextMessageAsync(message.Chat.Id, "Загрузка в сэмплер...", replyMarkup: replyKeyboardMarkup);
+          Console.WriteLine("Загрузка голоса в сэмплер...");
+
+          ConvertOggToWav();
+          Program.ExportVoices();
+          Console.WriteLine("Голос готов к использованию!");
+          await botClient.SendTextMessageAsync(message.Chat.Id, "Голос готов к использованию!", replyMarkup: replyKeyboardMarkup);
         }
 
 
@@ -124,7 +161,7 @@ namespace MidiReader
     {
       var voiceMessage = await client.GetFileAsync(fileId);
 
-      using (var fileStream = new FileStream("C1.ogg", FileMode.Create))
+      using (var fileStream = new FileStream("C3.ogg", FileMode.Create))
       {
         await client.DownloadFileAsync(voiceMessage.FilePath, fileStream);
       }

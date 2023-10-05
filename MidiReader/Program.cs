@@ -1,4 +1,6 @@
-﻿using Sanford.Multimedia.Midi;
+﻿using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
+using Sanford.Multimedia.Midi;
 
 namespace MidiReader
 {
@@ -95,6 +97,10 @@ namespace MidiReader
 
     public static void Main()
     {
+      // изменение на 0.5 - на октаву. 1.0 - играет в C3 (original). 1.0 + <число>f / 12f, где <число>f - количество полутонов, которое надо прибавить (или убавить)
+
+      
+
       var bot = new TelegramBot(BotToken.Token);
 
       bot.Start();
@@ -109,7 +115,7 @@ namespace MidiReader
       Dictionary<int, string> noteMappings = new Dictionary<int, string>()
         {
           { 36, "C1.wav" }, // первая До на 4-октавной
-          { 37, "C#1.wav"}, 
+          { 37, "C#1.wav"},
           { 38, "D1.wav"},
           { 39, "D#1.wav" },
           { 40, "E1.wav"},
@@ -182,6 +188,89 @@ namespace MidiReader
       midiPlayer.Start();
 
       Console.ReadLine();
+    }
+
+    public static void ExportVoices()
+    {
+      for (int i = -24; i <= 24; i++)
+      {
+        SMBPitchShiftingSampleProvider SMB = new SMBPitchShiftingSampleProvider(new AudioFileReader(@"C3.wav"), 4096, 4L, 1.0f + i * 0.5f / 12f);
+
+
+        Dictionary<int, string> voiceFileNames = new Dictionary<int, string>()
+        {
+          { -24, "C1.wav" }, // первая До на 4-октавной
+          { -23, "C#1.wav"},
+          { -22, "D1.wav"},
+          { -21, "D#1.wav" },
+          { -20, "E1.wav"},
+          { -19, "F1.wav"},
+          { -18, "F#1.wav"},
+          { -17, "G1.wav"},
+          { -16, "G#1.wav"},
+          { -15, "A1.wav"},
+          { -14, "A#1.wav"},
+          { -13, "B1.wav"},
+          { -12, "C2.wav" }, // вторая До на 4-октавной
+          { -11, "C#2.wav"},
+          { -10, "D2.wav"},
+          { -9, "D#2.wav" },
+          { -8, "E2.wav"},
+          { -7, "F2.wav"},
+          { -6, "F#2.wav"},
+          { -5, "G2.wav"},
+          { -4, "G#2.wav"},
+          { -3, "A2.wav"},
+          { -2, "A#2.wav"},
+          { -1, "B2.wav"},
+          { 0, "C3.wav" }, // третья До на 4-октавной
+          { 1, "C#3.wav"},
+          { 2, "D3.wav"},
+          { 3, "D#3.wav" },
+          { 4, "E3.wav"},
+          { 5, "F3.wav"},
+          { 6, "F#3.wav"},
+          { 7, "G3.wav"},
+          { 8, "G#3.wav"},
+          { 9, "A3.wav"},
+          { 10, "A#3.wav"},
+          { 11, "B3.wav"},
+          { 12, "C4.wav"}, // четвёртая До на 4-октавной
+          { 13, "C#4.wav"},
+          { 14, "D4.wav"},
+          { 15, "D#4.wav" },
+          { 16, "E4.wav"},
+          { 17, "F4.wav"},
+          { 18, "F#4.wav"},
+          { 19, "G4.wav"},
+          { 20, "G#4.wav"},
+          { 21, "A4.wav"},
+          { 22, "A#4.wav"},
+          { 23, "B4.wav"},
+          { 24, "C5.wav"} // пятая До на 4-октавной.
+
+        };
+
+        string name = voiceFileNames.GetValueOrDefault(i);
+
+        string outputFilePath = @$"voice\{name}";
+
+        using (var wo = new WaveFileWriter(outputFilePath, SMB.WaveFormat))
+        {
+          var buffer = new float[4096];
+          int bytesRead;
+
+          while ((bytesRead = SMB.Read(buffer, 0, buffer.Length)) > 0)
+          {
+            var bytesToWrite = bytesRead * 4; // Каждый float занимает 4 байта
+            var bufferBytes = new byte[bytesToWrite];
+
+            Buffer.BlockCopy(buffer, 0, bufferBytes, 0, bytesToWrite);
+
+            wo.Write(bufferBytes, 0, bufferBytes.Length);
+          }
+        }
+      }
     }
 
     public static void SetPiano(out string folder)
