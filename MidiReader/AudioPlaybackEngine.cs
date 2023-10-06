@@ -33,7 +33,7 @@ namespace MidiReader
     public void PlaySound(string fileName)
     {
       var input = new AudioFileReader(fileName);
-      AddMixerInput(new AutoDisposeFileReader(input));
+      //AddMixerInput(new AutoDisposeFileReader(input));
     }
 
     private ISampleProvider ConvertToRightChannelCount(ISampleProvider input)
