@@ -24,6 +24,7 @@ namespace MidiReader
   {
     private static TelegramBotClient client;
     private static string folder;
+    private FileStream stream;
 
     public TelegramBot(string token)
     {
@@ -36,9 +37,9 @@ namespace MidiReader
       client.StartReceiving(Update, Error);
     }
 
+
     public static void ConvertOggToWav()
     {
-      //var filePath = $@"C:\Users\blabla\foo\bar\";
       var fileOgg = "C3.ogg";
       var fileWav = "C3.wav";
 
@@ -61,10 +62,14 @@ namespace MidiReader
           }
         }
         pcmStream.Position = 0;
-        var wavStream = new RawSourceWaveStream(pcmStream, new WaveFormat(44100, 1));
+        using var wavStream = new RawSourceWaveStream(pcmStream, new WaveFormat(44100, 1));
         var sampleProvider = wavStream.ToSampleProvider();
         WaveFileWriter.CreateWaveFile16($"{fileWav}", sampleProvider);
+        
+        
       }
+
+      
     }
 
 
@@ -125,10 +130,9 @@ namespace MidiReader
 
         if (message.Voice != null)
         {
-          //string filePath  = "C1.ogg";
           folder = "voice";
 
-          await DownloadVoiceMessage(update.Message.Voice.FileId);
+          await DownloadVoiceMessage(message.Voice.FileId);
           await botClient.SendTextMessageAsync(message.Chat.Id, "Загрузка в сэмплер...", replyMarkup: replyKeyboardMarkup);
           Console.WriteLine("Загрузка голоса в сэмплер...");
 
@@ -161,7 +165,7 @@ namespace MidiReader
     {
       var voiceMessage = await client.GetFileAsync(fileId);
 
-      using (var fileStream = new FileStream("C3.ogg", FileMode.Create))
+      using (var fileStream = new FileStream("C3.ogg", FileMode.OpenOrCreate))
       {
         await client.DownloadFileAsync(voiceMessage.FilePath, fileStream);
       }

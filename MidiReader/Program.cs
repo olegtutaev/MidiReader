@@ -194,7 +194,8 @@ namespace MidiReader
     {
       for (int i = -24; i <= 24; i++)
       {
-        SMBPitchShiftingSampleProvider SMB = new SMBPitchShiftingSampleProvider(new AudioFileReader(@"C3.wav"), 4096, 4L, 1.0f + i * 0.5f / 12f);
+        var afr = new AudioFileReader(@"C3.wav");
+        SMBPitchShiftingSampleProvider SMB = new SMBPitchShiftingSampleProvider(afr, 4096, 4L, 1.0f + i * 0.5f / 12f);
 
 
         Dictionary<int, string> voiceFileNames = new Dictionary<int, string>()
@@ -270,6 +271,8 @@ namespace MidiReader
             wo.Write(bufferBytes, 0, bufferBytes.Length);
           }
         }
+        afr.Close();
+        afr.Dispose();
       }
     }
 
