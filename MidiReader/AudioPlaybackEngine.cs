@@ -33,7 +33,8 @@ namespace MidiReader
     public void PlaySound(string fileName)
     {
       var input = new AudioFileReader(fileName);
-      AddMixerInput(new AutoDisposeFileReader(input));
+      //AddMixerInput(new AutoDisposeFileReader(input));
+      AddMixerInput(input);
     }
 
     private ISampleProvider ConvertToRightChannelCount(ISampleProvider input)
@@ -53,10 +54,10 @@ namespace MidiReader
     /// Воспроизводит звуковой файл из объекта CachedSound. Принимает параметр sound типа CachedSound, содержащий звуковые данные.
     /// </summary>
     /// <param name="sound"></param>
-    public void PlaySound(CachedSound sound)
-    {
-      AddMixerInput(new CachedSoundSampleProvider(sound));
-    }
+    //public void PlaySound(CachedSound sound)
+    //{
+    //  AddMixerInput(new CachedSoundSampleProvider(sound));
+    //}
 
     private void AddMixerInput(ISampleProvider input)
     {

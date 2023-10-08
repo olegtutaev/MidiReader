@@ -50,11 +50,15 @@
             },
             "NAudio": {
               "target": "Package",
-              "version": "[2.2.1, )"
+              "version": "[1.9.0, )"
             },
             "Sanford.Multimedia.Midi": {
               "target": "Package",
               "version": "[6.6.2, )"
+            },
+            "SoundTouch.Net.NAudioSupport": {
+              "target": "Package",
+              "version": "[2.3.2, )"
             },
             "Telegram.Bot": {
               "target": "Package",

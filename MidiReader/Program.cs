@@ -1,12 +1,52 @@
 ﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using Sanford.Multimedia.Midi;
+using SoundTouch.Net;
+//using NAudio.SoundTouch;
+using SoundTouch.Net.NAudioSupport;
+using NAudio;
+using SoundTouch;
+
+
+
 
 namespace MidiReader
 {
   public class Program
   {
-    private static string folder = "piano";
+    //#region Experiments
+
+    public static void ChangePitch(string inputFile, string outputFile, int semitones)
+    {
+      using (var reader = new AudioFileReader(inputFile))
+      {
+        //var audioFile = @"путь_к_аудиофайлу.wav";
+        //var waveFileReader = new WaveFileReader(audioFile);
+        var processor = new SoundTouchProcessor();
+        var soundTouchWaveProvider = new SoundTouchWaveProvider(reader, processor);
+
+        soundTouchWaveProvider.Rate = (float)Math.Pow(2, semitones / 12.0);
+
+        //float minRate = 0.5f; // Минимальное значение скорости (полутона ниже)
+        //float maxRate = 2.0f; // Максимальное значение скорости (полутона выше)
+        //float rateRange = maxRate - minRate; // Диапазон изменения скорости
+
+       // float rate = 0.5f + (semitones / 12.0f) * 1.5f;
+        //soundTouchWaveProvider.Rate = 0.1f;
+
+        //soundTouchWaveProvider.Pitch = (float)Math.Pow(2, semitones / 12.0);
+        /////////////////////////////////////////
+        ///
+        //var pitchShifter = new SmbPitchShiftingSampleProvider(reader);
+        //pitchShifter.PitchFactor = (float)Math.Pow(2, semitones / 12.0);
+        WaveFileWriter.CreateWaveFile16(outputFile, soundTouchWaveProvider.ToSampleProvider());
+        //reader.Dispose();
+      }
+    }
+    //#endregion
+
+
+    private static string folder;
     private static int deviceNumber;
 
     private static byte[] CreateWavHeader(int dataSize)
@@ -97,9 +137,67 @@ namespace MidiReader
 
     public static void Main()
     {
-      // изменение на 0.5 - на октаву. 1.0 - играет в C3 (original). 1.0 + <число>f / 12f, где <число>f - количество полутонов, которое надо прибавить (или убавить)
+      #region Experiments
+      // изменение на 0.5 - на октаву. 1.0 - играет в C3 (original). 1.0 + <число>f / 12f, где <число>f - количество полутонов, которое надо прибавить (или убавить) - для SMBPitchShifter и SMBPitchShiftingSampleProvider
+      var a = Math.Pow(2, 6/12);
+      Console.WriteLine(a); 
 
-      
+      //// Открываем аудиофайл
+      //var audioFile = new AudioFileReader("C3.wav");
+
+      //// Создаем экземпляр класса MediaFoundationResampler для изменения скорости
+      //var resampler = new MediaFoundationResampler(audioFile, new WaveFormat(44100, audioFile.WaveFormat.Channels));
+
+      //// Устанавливаем желаемую скорость (например, для повышения на октаву вверх)
+      //float pitchFactor = 2.0f;
+      //resampler.ResamplerQuality = 60;
+      //// Создаем экземпляр класса WaveFileWriter для записи измененного аудиофайла
+      //var outputFile = new WaveFileWriter("C4.wav", resampler.WaveFormat);
+
+      //// Читаем и обрабатываем аудиофреймы
+      //var buffer = new float[resampler.WaveFormat.SampleRate * resampler.WaveFormat.Channels];
+      //int bytesRead;
+      //do
+      //{
+      //  bytesRead = resampler.Read(buffer, 0, buffer.Length);
+
+      //  // Преобразуем каждое значение типа float в массив байтов
+      //  var byteBuffer = new byte[bytesRead * sizeof(float)];
+      //  for (int i = 0; i < bytesRead; i++)
+      //  {
+      //    byte[] bytes = BitConverter.GetBytes(buffer[i]);
+      //    Buffer.BlockCopy(bytes, 0, byteBuffer, i * sizeof(float), sizeof(float));
+      //  }
+
+      //  outputFile.Write(byteBuffer, 0, byteBuffer.Length);
+      //} while (bytesRead > 0);
+
+      //// Закрываем файлы
+      //audioFile.Dispose();
+      //outputFile.Dispose();
+
+
+      //AudioPlaybackEngine.Instance.PlaySound("C4.wav");
+
+
+      //ChangePitch("C3.wav", "C4.wav", 12);
+
+      //bool toDo = true; //!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      //if (toDo == true)
+      //{
+      //  while (true)
+      //  {
+      //    AudioPlaybackEngine.Instance.PlaySound("C4.wav");
+      //    Thread.Sleep(1000);
+      //    //AudioPlaybackEngine.Instance.PlaySound(@"voice\E3.wav");
+      //    Thread.Sleep(1000);
+      //  }
+      //}
+
+      //////AudioPlaybackEngine.Instance.PlaySound("C#3.wav");
+      #endregion Experiments
+
 
       var bot = new TelegramBot(BotToken.Token);
 
@@ -194,8 +292,8 @@ namespace MidiReader
     {
       for (int i = -24; i <= 24; i++)
       {
-        var afr = new AudioFileReader(@"C3.wav");
-        SMBPitchShiftingSampleProvider SMB = new SMBPitchShiftingSampleProvider(afr, 4096, 4L, 1.0f + i * 0.5f / 12f);
+        //var afr = new AudioFileReader(@"C3.wav");
+        //SMBPitchShiftingSampleProvider SMB = new SMBPitchShiftingSampleProvider(afr, 4096, 4L, 1.0f + i * 0.5f / 12f);
 
 
         Dictionary<int, string> voiceFileNames = new Dictionary<int, string>()
@@ -251,34 +349,36 @@ namespace MidiReader
           { 24, "C5.wav"} // пятая До на 4-октавной.
 
         };
-
         string name = voiceFileNames.GetValueOrDefault(i);
-
         string outputFilePath = @$"voice\{name}";
+        ChangePitch("C3.wav", outputFilePath, i);
+        //string name = voiceFileNames.GetValueOrDefault(i);
 
-        using (var wo = new WaveFileWriter(outputFilePath, SMB.WaveFormat))
-        {
-          var buffer = new float[4096];
-          int bytesRead;
+        //string outputFilePath = @$"voice\{name}";
 
-          while ((bytesRead = SMB.Read(buffer, 0, buffer.Length)) > 0)
-          {
-            var bytesToWrite = bytesRead * 4; // Каждый float занимает 4 байта
-            var bufferBytes = new byte[bytesToWrite];
+        //using (var wo = new WaveFileWriter(outputFilePath, SMB.WaveFormat))
+        //{
+        //  var buffer = new float[4096];
+        //  int bytesRead;
 
-            Buffer.BlockCopy(buffer, 0, bufferBytes, 0, bytesToWrite);
+        //  while ((bytesRead = SMB.Read(buffer, 0, buffer.Length)) > 0)
+        //  {
+        //    var bytesToWrite = bytesRead * 4; // Каждый float занимает 4 байта
+        //    var bufferBytes = new byte[bytesToWrite];
 
-            wo.Write(bufferBytes, 0, bufferBytes.Length);
-          }
-        }
-        afr.Close();
-        afr.Dispose();
+        //    Buffer.BlockCopy(buffer, 0, bufferBytes, 0, bytesToWrite);
+
+        //    wo.Write(bufferBytes, 0, bufferBytes.Length);
+        //  }
+        //}
+        //afr.Close();
+        //afr.Dispose();
       }
     }
 
     public static void SetPiano(out string folder)
     {
-      folder = "piano";
+      folder = "voice";
     }
   }
 }

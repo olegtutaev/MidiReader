@@ -16,11 +16,6 @@ D:\VS_Projects\MidiReader\MidiReader\obj\Debug\net6.0\MidiReader.pdb
 D:\VS_Projects\MidiReader\MidiReader\obj\Debug\net6.0\MidiReader.genruntimeconfig.cache
 D:\VS_Projects\MidiReader\MidiReader\obj\Debug\net6.0\ref\MidiReader.dll
 D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\NAudio.dll
-D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\NAudio.Asio.dll
-D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\NAudio.Core.dll
-D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\NAudio.Midi.dll
-D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\NAudio.Wasapi.dll
-D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\NAudio.WinMM.dll
 D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\Newtonsoft.Json.dll
 D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\Telegram.Bot.dll
 C:\Users\Oleg\Desktop\MidiReader\MidiReader\bin\Debug\net6.0\MidiReader.exe
@@ -50,3 +45,5 @@ C:\Users\Oleg\Desktop\MidiReader\MidiReader\obj\Debug\net6.0\MidiReader.genrunti
 C:\Users\Oleg\Desktop\MidiReader\MidiReader\obj\Debug\net6.0\ref\MidiReader.dll
 D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\Concentus.dll
 D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\Concentus.Oggfile.dll
+D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\SoundTouch.Net.dll
+D:\VS_Projects\MidiReader\MidiReader\bin\Debug\net6.0\SoundTouch.Net.NAudioSupport.dll

@@ -48,7 +48,7 @@ namespace MidiReader
       {
         Concentus.Structs.OpusDecoder decoder = new Concentus.Structs.OpusDecoder(48000, 1);
         OpusOggReadStream oggIn = new OpusOggReadStream(decoder, fileIn);
-
+        
         while (oggIn.HasNextPacket)
         {
           short[] packet = oggIn.DecodeNextPacket();
@@ -57,7 +57,7 @@ namespace MidiReader
             for (int i = 0; i < packet.Length; i++)
             {
               var bytes = BitConverter.GetBytes(packet[i]);
-              pcmStream.Write(bytes, 0, bytes.Length);
+              pcmStream.Write(bytes, 0, bytes.Length);             
             }
           }
         }
@@ -65,7 +65,7 @@ namespace MidiReader
         using var wavStream = new RawSourceWaveStream(pcmStream, new WaveFormat(44100, 1));
         var sampleProvider = wavStream.ToSampleProvider();
         WaveFileWriter.CreateWaveFile16($"{fileWav}", sampleProvider);
-        
+        wavStream.Dispose();      
         
       }
 
@@ -137,6 +137,7 @@ namespace MidiReader
           Console.WriteLine("Загрузка голоса в сэмплер...");
 
           ConvertOggToWav();
+          
           Program.ExportVoices();
           Console.WriteLine("Голос готов к использованию!");
           await botClient.SendTextMessageAsync(message.Chat.Id, "Голос готов к использованию!", replyMarkup: replyKeyboardMarkup);
@@ -150,7 +151,11 @@ namespace MidiReader
 
     private static Task Error(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
     {
+      
       throw new NotImplementedException();
+      Console.ForegroundColor = ConsoleColor.Red;
+      Console.WriteLine(new NotImplementedException());
+      Console.ResetColor();
     }
 
     public static string SetFolder()
@@ -168,7 +173,9 @@ namespace MidiReader
       using (var fileStream = new FileStream("C3.ogg", FileMode.OpenOrCreate))
       {
         await client.DownloadFileAsync(voiceMessage.FilePath, fileStream);
+        Console.WriteLine("Скачалось");
       }
+
     }
   }
 }

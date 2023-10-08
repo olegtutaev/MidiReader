@@ -106,16 +106,16 @@ namespace MidiReader
     //  }
     //}
 
-    public void StopWavFile(int noteNumber)
-    {
-      if (players.ContainsKey(noteNumber))
-      {
-        var player = players[noteNumber];
-        player.Stop();
-        player.Dispose();
-        players.Remove(noteNumber);
-      }
-    }
+    //public void StopWavFile(int noteNumber)
+    //{
+    //  if (players.ContainsKey(noteNumber))
+    //  {
+    //    var player = players[noteNumber];
+    //    player.Stop();
+    //    player.Dispose();
+    //    players.Remove(noteNumber);
+    //  }
+    //}
 
     //public async Task PlayWavFileAsync(string fileName)
     //{
@@ -154,12 +154,13 @@ namespace MidiReader
 
     public void PlayWavFileAsync(string fileName)
     {
-      Console.WriteLine("Зашёл в PlayWavFile");
-      using (var stream = new FileStream(fileName, FileMode.Open))
-      {
-        var sound = new CachedSound(stream);
-        AudioPlaybackEngine.Instance.PlaySound(sound);
-      }
+      AudioPlaybackEngine.Instance.PlaySound(fileName);
+      //Console.WriteLine("Зашёл в PlayWavFile");
+      //using (var stream = new FileStream(fileName, FileMode.Open))
+      //{
+      //  var sound = new CachedSound(stream);
+      //  AudioPlaybackEngine.Instance.PlaySound(sound);
+      //}
     }
   }
   #endregion
