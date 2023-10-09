@@ -1,22 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NAudio.Wave;
-using MidiReader;
-using NAudio.Midi;
-using System.Media;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using System.Net.Http;
-//using NAudio.Vorbis;
-//using OpusDotNet;
-using Concentus;
-using Concentus.Oggfile;
-using Concentus.Structs;
-//using OpusDotNet;
 
 namespace MidiReader
 {
@@ -24,7 +8,6 @@ namespace MidiReader
   {
     private static TelegramBotClient client;
     private static string folder;
-    private FileStream stream;
 
     public TelegramBot(string token)
     {
@@ -37,47 +20,10 @@ namespace MidiReader
       client.StartReceiving(Update, Error);
     }
 
-
-    public static void ConvertOggToWav()
-    {
-      var fileOgg = "C3.ogg";
-      var fileWav = "C3.wav";
-
-      using (FileStream fileIn = new FileStream($"{fileOgg}", FileMode.Open))
-      using (MemoryStream pcmStream = new MemoryStream())
-      {
-        Concentus.Structs.OpusDecoder decoder = new Concentus.Structs.OpusDecoder(48000, 1);
-        OpusOggReadStream oggIn = new OpusOggReadStream(decoder, fileIn);
-        
-        while (oggIn.HasNextPacket)
-        {
-          short[] packet = oggIn.DecodeNextPacket();
-          if (packet != null)
-          {
-            for (int i = 0; i < packet.Length; i++)
-            {
-              var bytes = BitConverter.GetBytes(packet[i]);
-              pcmStream.Write(bytes, 0, bytes.Length);             
-            }
-          }
-        }
-        pcmStream.Position = 0;
-        using var wavStream = new RawSourceWaveStream(pcmStream, new WaveFormat(44100, 1));
-        var sampleProvider = wavStream.ToSampleProvider();
-        WaveFileWriter.CreateWaveFile16($"{fileWav}", sampleProvider);
-        wavStream.Dispose();      
-        
-      }
-
-      
-    }
-
-
     async static Task Update(ITelegramBotClient botClient, Update update, CancellationToken token)
     {
 
       var message = update.Message;
-      //var audioMessage = messageEventArgs.Message;
 
       if (message != null)
       {
@@ -136,9 +82,9 @@ namespace MidiReader
           await botClient.SendTextMessageAsync(message.Chat.Id, "Загрузка в сэмплер...", replyMarkup: replyKeyboardMarkup);
           Console.WriteLine("Загрузка голоса в сэмплер...");
 
-          ConvertOggToWav();
+          Sampler.ConvertOggToWav();
           
-          Program.ExportVoices();
+          Sampler.ExportVoices();
           Console.WriteLine("Голос готов к использованию!");
           await botClient.SendTextMessageAsync(message.Chat.Id, "Голос готов к использованию!", replyMarkup: replyKeyboardMarkup);
         }
@@ -160,10 +106,7 @@ namespace MidiReader
 
     public static string SetFolder()
     {
-
       return folder;
-
-
     }
 
     private static async Task DownloadVoiceMessage(string fileId)
@@ -175,7 +118,6 @@ namespace MidiReader
         await client.DownloadFileAsync(voiceMessage.FilePath, fileStream);
         Console.WriteLine("Скачалось");
       }
-
     }
   }
 }
