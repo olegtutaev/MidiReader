@@ -19,7 +19,6 @@
       bot.Start();
 
       MidiDeviceLister deviceLister = new MidiDeviceLister();
-      deviceLister.ListDevices();
       deviceNumber = deviceLister.ChooseDevice();
 
       // чекнуть нажатия

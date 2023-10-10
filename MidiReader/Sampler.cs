@@ -8,6 +8,31 @@ namespace MidiReader
 {
   public class Sampler
   {
+    /// <summary>
+    /// Данный метод ConvertOggToWav() служит для преобразования аудиофайла формата Ogg в формат WAV.
+
+    ///Сначала указываются исходные и конечные файлы: fileOgg - имя исходного файла Ogg, fileWav - имя файла WAV, в который будет сохранен результат.
+
+    ///Затем создается поток fileIn для чтения исходного файла Ogg и поток pcmStream в памяти для записи PCM данных.
+
+    ///Далее создается экземпляр декодера OpusDecoder с параметрами частоты дискретизации (48000) и количества каналов(2).
+
+    ///Создается экземпляр OpusOggReadStream, используя декодер и поток fileIn, для чтения и декодирования пакетов из файла Ogg.
+
+    ///Затем происходит цикл, в котором происходит декодирование пакетов и запись PCM данных в поток pcmStream.
+
+    ///Декодированные данные представлены в виде массива short[]. Каждое значение массива преобразуется в байты с помощью BitConverter.GetBytes() и записывается в поток pcmStream.
+
+    ///После окончания чтения и декодирования пакетов, устанавливаем позицию потока pcmStream в начало.
+
+    ///Создается экземпляр RawSourceWaveStream с использованием потока pcmStream и формата WAV (частота дискретизации 44100, 2 канала).
+
+    ///Далее, с помощью WaveFileWriter.CreateWaveFile16(), создается файл WAV с именем fileWav, используя данные из sampleProvider.
+
+    ///Наконец, освобождаем ресурсы, вызывая Dispose() для потока wavStream.
+
+    ///Этот метод позволяет преобразовывать аудиофайлы формата Ogg в формат WAV с помощью декодирования и записи PCM данных.
+    /// </summary>
     public static void ConvertOggToWav()
     {
       var fileOgg = "C3.ogg";
@@ -56,7 +81,7 @@ namespace MidiReader
         var processor = new SoundTouchProcessor();
         var soundTouchWaveProvider = new SoundTouchWaveProvider(reader, processor);
 
-        soundTouchWaveProvider.Rate = (float)Math.Pow(2, semitones / 12.0);
+        soundTouchWaveProvider.Pitch = (float)Math.Pow(2, semitones / 12.0);
 
         WaveFileWriter.CreateWaveFile16(outputFile, soundTouchWaveProvider.ToSampleProvider());
       }
