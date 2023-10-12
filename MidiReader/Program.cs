@@ -12,14 +12,13 @@
       //Console.WriteLine(a); 
       #endregion Experiments
 
-      AudioPlaybackEngine.Instance.PlaySound("Empty.wav");
+      AudioPlaybackEngine.Instance.PlaySound("Empty.wav");  // Чтобы в начале игры не было щелчка, включаем микшер отправкой WAV-файла, содержащего тишину.
 
       var bot = new TelegramBot(BotToken.Token);
-
       bot.Start();
 
       MidiDeviceLister deviceLister = new MidiDeviceLister();
-      deviceNumber = deviceLister.ChooseDevice();
+      deviceNumber = deviceLister.GetMidiDevice();
 
       // чекнуть нажатия
       //MidiKeyboardListener keyboardListener = new MidiKeyboardListener();

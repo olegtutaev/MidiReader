@@ -22,7 +22,6 @@ namespace MidiReader
 
     async static Task Update(ITelegramBotClient botClient, Update update, CancellationToken token)
     {
-
       var message = update.Message;
 
       if (message != null)
@@ -34,13 +33,12 @@ namespace MidiReader
             new KeyboardButton("Bass"),
             new KeyboardButton("Piano")
           },
-            new[]
+          new[]
           {
             new KeyboardButton("Brass"),
             new KeyboardButton("Windbox")
           }
         });
-
 
         if (message.Text == "Bass")
         {
@@ -76,32 +74,26 @@ namespace MidiReader
 
         if (message.Voice != null)
         {
-          folder = "voice";
-
-          await DownloadVoiceMessage(message.Voice.FileId);
           await botClient.SendTextMessageAsync(message.Chat.Id, "Загрузка в сэмплер...", replyMarkup: replyKeyboardMarkup);
           Console.WriteLine("Загрузка голоса в сэмплер...");
 
-          Sampler.ConvertOggToWav();
-          
+          folder = null; // Чтобы MidiPlayer не занимал перезаписывающиеся файлы.
+          await DownloadVoiceMessage(message.Voice.FileId);
+          Thread.Sleep(1000); // Без задержки последний проигранный файл может не успеть освободится от чтения и возникнет ошибка при перезаписи.
+
+          Sampler.ConvertOggToWav();         
           Sampler.ExportVoices();
-          Console.WriteLine("Голос готов к использованию!");
-          await botClient.SendTextMessageAsync(message.Chat.Id, "Голос готов к использованию!", replyMarkup: replyKeyboardMarkup);
+
+          Console.WriteLine("Запись готова к использованию!");
+          await botClient.SendTextMessageAsync(message.Chat.Id, "Запись готова к использованию!", replyMarkup: replyKeyboardMarkup);
+          folder = "voice";
         }
-
-
-
       }
-
     }
 
     private static Task Error(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
-    {
-      
+    {    
       throw new NotImplementedException();
-      Console.ForegroundColor = ConsoleColor.Red;
-      Console.WriteLine(new NotImplementedException());
-      Console.ResetColor();
     }
 
     public static string SetFolder()
@@ -116,7 +108,6 @@ namespace MidiReader
       using (var fileStream = new FileStream("C3.ogg", FileMode.OpenOrCreate))
       {
         await client.DownloadFileAsync(voiceMessage.FilePath, fileStream);
-        Console.WriteLine("Скачалось");
       }
     }
   }

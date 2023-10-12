@@ -1,26 +1,17 @@
-﻿//using Sanford.Multimedia.Midi;
-using NAudio.Midi;
+﻿using NAudio.Midi;
 
 namespace MidiReader
 {
   public class MidiDeviceLister
   {
-    private static int deviceNumber;
+    private static int deviceId;
 
-    public int ChooseDevice()
+    public int GetMidiDevice()
     {
       var numberOfAllDevices = MidiIn.NumberOfDevices; // Это количество не только подключюченных MIDI-устройств, но и тех, что встроены в Windows. 
       Dictionary<int, string> midiDevices = new Dictionary<int, string>();
 
-      for (int deviceID = 0; deviceID < numberOfAllDevices; deviceID++)
-      {
-        var deviceName = MidiIn.DeviceInfo(deviceID);
-        
-        if(deviceName.Manufacturer.ToString() != "Microsoft") // 
-        {
-          midiDevices.Add(deviceID, deviceName.ProductName);
-        }
-      }
+      AddMidiDevices(numberOfAllDevices, midiDevices);
 
       if (midiDevices.Count == 0)
       {
@@ -30,16 +21,8 @@ namespace MidiReader
 
         while (midiDevices.Count == 0)
         {
-          numberOfAllDevices = MidiIn.NumberOfDevices;
-
-          for(int deviceID = 0; deviceID < numberOfAllDevices; deviceID++)
-          {
-            var deviceName = MidiIn.DeviceInfo(deviceID);
-
-            if (deviceName.Manufacturer.ToString() != "Microsoft")
-              midiDevices.Add(deviceID, deviceName.ProductName);
-          }
-          
+          numberOfAllDevices = MidiIn.NumberOfDevices;  // Проверка подключения.
+          AddMidiDevices(numberOfAllDevices, midiDevices);
         }
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Появилось!");
@@ -49,6 +32,7 @@ namespace MidiReader
       if (midiDevices.Count == 1)
       {
         Console.WriteLine($"Подключено MIDI-устройство {midiDevices.First().Value}");
+
         return midiDevices.First().Key;
       }
 
@@ -60,36 +44,48 @@ namespace MidiReader
         Console.WriteLine($"ID {device.Key}: {device.Value}");
       }
 
-      //все
-      //for (int deviceID = 0; deviceID < devices; deviceID++)
-      //{
-      //  var deviceName = MidiIn.DeviceInfo(deviceID);
-      //  Console.WriteLine($"ID {deviceID}: {deviceName.ProductName}");
-      //}
-      //
-
-
-
       Console.WriteLine();
       Console.WriteLine("Введите ID MIDI-устройства");
+
       bool success = false;
       while (success == false)
       {
-        string userInput = Console.ReadLine();
-        success = int.TryParse(userInput, out deviceNumber) && midiDevices.ContainsKey(deviceNumber);
+        var userInput = Console.ReadLine();
+        success = int.TryParse(userInput, out deviceId) && midiDevices.ContainsKey(deviceId);
 
         if (success)
         {
-          string deviceName =  MidiIn.DeviceInfo(deviceNumber).ProductName;
-          Console.WriteLine($"Подключено MIDI-устройство {deviceNumber}: {deviceName}");
+          string deviceName =  MidiIn.DeviceInfo(deviceId).ProductName;
+          Console.WriteLine($"Подключено MIDI-устройство {deviceName}");
         }
         else
         {
-          Console.WriteLine("Некорректный ввод. Введите номер одного из предложенных устройств.");
+          Console.WriteLine("Некорректный ввод. Введите ID одного из предложенных устройств.");
         }
       }
 
-      return deviceNumber;
+      return deviceId;
+    }
+
+    private static void AddMidiDevices(int numberOfAllDevices, Dictionary<int, string> midiDevices)
+    {
+      for (deviceId = 0; deviceId < numberOfAllDevices; deviceId++)
+      {
+        var deviceName = MidiIn.DeviceInfo(deviceId);
+
+        if (deviceName.Manufacturer.ToString() != "Microsoft")
+          midiDevices.Add(deviceId, deviceName.ProductName);
+      }
     }
   }
 }
+
+#region DontUse
+//все
+//for (int deviceID = 0; deviceID < devices; deviceID++)
+//{
+//  var deviceName = MidiIn.DeviceInfo(deviceID);
+//  Console.WriteLine($"ID {deviceID}: {deviceName.ProductName}");
+//}
+//
+#endregion

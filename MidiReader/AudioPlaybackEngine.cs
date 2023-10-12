@@ -39,6 +39,7 @@ namespace MidiReader
       mixer.AddMixerInput(input);
     }
 
+
     #region DontUse
     //private ISampleProvider ConvertToRightChannelCount(ISampleProvider input)
     //{

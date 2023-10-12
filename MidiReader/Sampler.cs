@@ -8,6 +8,9 @@ namespace MidiReader
 {
   public class Sampler
   {
+    private static string fileOgg = "C3.ogg";
+    private static string fileWav = "C3.wav";
+
     /// <summary>
     /// Данный метод ConvertOggToWav() служит для преобразования аудиофайла формата Ogg в формат WAV.
 
@@ -33,20 +36,20 @@ namespace MidiReader
 
     ///Этот метод позволяет преобразовывать аудиофайлы формата Ogg в формат WAV с помощью декодирования и записи PCM данных.
     /// </summary>
+
     public static void ConvertOggToWav()
     {
-      var fileOgg = "C3.ogg";
-      var fileWav = "C3.wav";
-
       using (FileStream fileIn = new FileStream($"{fileOgg}", FileMode.Open))
+
       using (MemoryStream pcmStream = new MemoryStream())
       {
-        OpusDecoder decoder = new OpusDecoder(48000, 2);
+        OpusDecoder decoder = new OpusDecoder(48000, 2);  // Не поддерживает частоту дискретизации 44100 кГц.
         OpusOggReadStream oggIn = new OpusOggReadStream(decoder, fileIn);
 
         while (oggIn.HasNextPacket)
         {
-          short[] packet = oggIn.DecodeNextPacket();
+          var packet = oggIn.DecodeNextPacket();
+
           if (packet != null)
           {
             for (int i = 0; i < packet.Length; i++)
@@ -60,17 +63,18 @@ namespace MidiReader
         using var wavStream = new RawSourceWaveStream(pcmStream, new WaveFormat(44100, 2));
         var sampleProvider = wavStream.ToSampleProvider();
         WaveFileWriter.CreateWaveFile16($"{fileWav}", sampleProvider);
-        wavStream.Dispose();
       }
     }
 
     public static void ExportVoices()
     {
-      for (int i = -24; i <= 24; i++)
+      var semitones = SemitonesMap.Semitones.Keys;
+
+      for (int i = semitones.FirstOrDefault(); i <= semitones.Last(); i++)
       {
-        string name = SemitonesMap.Names.GetValueOrDefault(i);
-        string outputFilePath = @$"voice\{name}";
-        ChangePitch("C3.wav", outputFilePath, i);
+        var name = SemitonesMap.Semitones.GetValueOrDefault(i);
+        var outputFilePath = @$"voice\{name}";
+        ChangePitch(fileWav, outputFilePath, i);
       }
     }
 
@@ -78,11 +82,11 @@ namespace MidiReader
     {
       using (var reader = new AudioFileReader(inputFile))
       {
+        var semitonesOctave = 12.0; // Обязательно должно быть double.
         var processor = new SoundTouchProcessor();
         var soundTouchWaveProvider = new SoundTouchWaveProvider(reader, processor);
 
-        soundTouchWaveProvider.Pitch = (float)Math.Pow(2, semitones / 12.0);
-
+        soundTouchWaveProvider.Pitch = (float)Math.Pow(2, semitones / semitonesOctave);
         WaveFileWriter.CreateWaveFile16(outputFile, soundTouchWaveProvider.ToSampleProvider());
       }
     }
