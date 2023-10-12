@@ -1,34 +1,20 @@
 ﻿namespace MidiReader
 {
-  public class Program
+  internal sealed class Program
   {
     private static string folder;
-    private static int deviceNumber;
+    private static int deviceId;
+    private const string emptyWav = "Empty.wav";
 
     public static void Main()
     {
-      #region Experiments     
-      //var a = Math.Pow(2, 6/12);
-      //Console.WriteLine(a); 
-      #endregion Experiments
-
-      AudioPlaybackEngine.Instance.PlaySound("Empty.wav");  // Чтобы в начале игры не было щелчка, включаем микшер отправкой WAV-файла, содержащего тишину.
-
+      AudioPlaybackEngine.Instance.PlaySound(emptyWav);  // Чтобы в начале игры не было щелчка, включаем микшер отправкой WAV-файла, содержащего тишину.
       var bot = new TelegramBot(BotToken.Token);
       bot.Start();
-
-      MidiDeviceLister deviceLister = new MidiDeviceLister();
-      deviceNumber = deviceLister.GetMidiDevice();
-
-      // чекнуть нажатия
-      //MidiKeyboardListener keyboardListener = new MidiKeyboardListener();
-      //keyboardListener.StartListening();
-
-      MidiPlayer midiPlayer = new MidiPlayer(NoteMap.Notes, folder, deviceNumber);
+      var deviceLister = new MidiDeviceLister();
+      deviceId = deviceLister.GetMidiDeviceId();
+      var midiPlayer = new MidiPlayer(NoteMap.Notes, folder, deviceId);
       midiPlayer.Start();
-
-      Console.ReadLine();
     }
   }
 }
-

@@ -2,16 +2,29 @@
 
 namespace MidiReader
 {
-  public class MidiDeviceLister
+  /// <summary>
+  /// Класс MidiDeviceLister предоставляет функционал для получения информации о подключенных MIDI-устройствах.
+  /// </summary>
+  internal sealed class MidiDeviceLister
   {
+    #region Константы
+    private const string microsoft = "Microsoft";
+    #endregion
+
+    #region Поля
     private static int deviceId;
+    #endregion
 
-    public int GetMidiDevice()
+    #region Методы
+    /// <summary>
+    /// Возвращает идентификатор подключенного MIDI-устройства.
+    /// </summary>
+    /// <returns>Идентификатор подключенного MIDI-устройства.</returns>
+    public int GetMidiDeviceId()
     {
-      var numberOfAllDevices = MidiIn.NumberOfDevices; // Это количество не только подключюченных MIDI-устройств, но и тех, что встроены в Windows. 
-      Dictionary<int, string> midiDevices = new Dictionary<int, string>();
-
-      AddMidiDevices(numberOfAllDevices, midiDevices);
+      var numberOfAllDevices = MidiIn.NumberOfDevices;
+      var midiDevices = new Dictionary<int, string>();
+      this.AddMidiDevices(numberOfAllDevices, midiDevices);
 
       if (midiDevices.Count == 0)
       {
@@ -21,8 +34,8 @@ namespace MidiReader
 
         while (midiDevices.Count == 0)
         {
-          numberOfAllDevices = MidiIn.NumberOfDevices;  // Проверка подключения.
-          AddMidiDevices(numberOfAllDevices, midiDevices);
+          numberOfAllDevices = MidiIn.NumberOfDevices;
+          this.AddMidiDevices(numberOfAllDevices, midiDevices);
         }
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Появилось!");
@@ -32,31 +45,30 @@ namespace MidiReader
       if (midiDevices.Count == 1)
       {
         Console.WriteLine($"Подключено MIDI-устройство {midiDevices.First().Value}");
+        Console.WriteLine();
 
         return midiDevices.First().Key;
       }
-
       Console.WriteLine("Список доступных MIDI-устройств:");
       Console.WriteLine();
 
-      foreach(var device in midiDevices)
-      {
+      foreach (var device in midiDevices)
         Console.WriteLine($"ID {device.Key}: {device.Value}");
-      }
 
       Console.WriteLine();
       Console.WriteLine("Введите ID MIDI-устройства");
+      var isCorrectInput = false;
 
-      bool success = false;
-      while (success == false)
+      while (isCorrectInput == false)
       {
         var userInput = Console.ReadLine();
-        success = int.TryParse(userInput, out deviceId) && midiDevices.ContainsKey(deviceId);
+        isCorrectInput = int.TryParse(userInput, out deviceId) && midiDevices.ContainsKey(deviceId);
 
-        if (success)
+        if (isCorrectInput)
         {
-          string deviceName =  MidiIn.DeviceInfo(deviceId).ProductName;
+          string deviceName = MidiIn.DeviceInfo(deviceId).ProductName;
           Console.WriteLine($"Подключено MIDI-устройство {deviceName}");
+          Console.WriteLine();
         }
         else
         {
@@ -67,25 +79,16 @@ namespace MidiReader
       return deviceId;
     }
 
-    private static void AddMidiDevices(int numberOfAllDevices, Dictionary<int, string> midiDevices)
+    private void AddMidiDevices(int numberOfAllDevices, Dictionary<int, string> midiDevices)
     {
       for (deviceId = 0; deviceId < numberOfAllDevices; deviceId++)
       {
         var deviceName = MidiIn.DeviceInfo(deviceId);
 
-        if (deviceName.Manufacturer.ToString() != "Microsoft")
+        if (deviceName.Manufacturer.ToString() != microsoft)
           midiDevices.Add(deviceId, deviceName.ProductName);
       }
     }
+    #endregion
   }
 }
-
-#region DontUse
-//все
-//for (int deviceID = 0; deviceID < devices; deviceID++)
-//{
-//  var deviceName = MidiIn.DeviceInfo(deviceID);
-//  Console.WriteLine($"ID {deviceID}: {deviceName.ProductName}");
-//}
-//
-#endregion

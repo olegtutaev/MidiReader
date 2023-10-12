@@ -1,7 +1,13 @@
 ﻿namespace MidiReader
 {
-  public static class SemitonesMap
+  /// <summary>
+  /// Класс SemitonesMap предоставляет словарь, содержащий соответствие между отступом от ноты C3 в полутонах и именами звуковых файлов.
+  /// </summary>
+  internal sealed class SemitonesMap
   {
+    /// <summary>
+    /// Словарь, содержащий соответствие между отступом от ноты C3 в полутонах и именами звуковых файлов.
+    /// </summary>
     public static Dictionary<int, string> Semitones { get; } = new Dictionary<int, string>()
     {
       { -24, "C1.wav" }, // первая До на 4-октавной клавиатуре.
