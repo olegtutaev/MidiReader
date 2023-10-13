@@ -3,7 +3,7 @@
 namespace MidiReader
 {
   /// <summary>
-  /// Класс MidiDeviceLister предоставляет функционал для получения информации о подключенных MIDI-устройствах.
+  /// Функционал для получения информации о подключенных MIDI-устройствах.
   /// </summary>
   internal sealed class MidiDeviceLister
   {
@@ -75,7 +75,6 @@ namespace MidiReader
           Console.WriteLine("Некорректный ввод. Введите ID одного из предложенных устройств.");
         }
       }
-
       return deviceId;
     }
 

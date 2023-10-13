@@ -48,9 +48,17 @@
               "target": "Package",
               "version": "[1.0.4, )"
             },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.20.69, )"
+            },
             "NAudio": {
               "target": "Package",
               "version": "[1.9.0, )"
+            },
+            "NUnit": {
+              "target": "Package",
+              "version": "[3.13.3, )"
             },
             "Sanford.Multimedia.Midi": {
               "target": "Package",

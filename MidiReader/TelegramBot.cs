@@ -5,7 +5,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace MidiReader
 {
   /// <summary>
-  /// Класс TelegramBot предоставляет функциональность для работы с Telegram-ботом.
+  /// Функциональность для работы с Telegram-ботом.
   /// </summary>
   internal sealed class TelegramBot
   {
@@ -25,7 +25,7 @@ namespace MidiReader
 
     #region Методы
     /// <summary>
-    /// Метод Start запускает процесс приема сообщений от пользователей.
+    /// Запускает процесс приема сообщений от пользователей.
     /// </summary>
     public void Start()
     {
@@ -112,7 +112,7 @@ namespace MidiReader
     }
 
     /// <summary>
-    /// Метод SetFolder возвращает текущую выбранную папку.
+    /// Возвращает текущую выбранную папку.
     /// </summary>
     /// <returns>Выбранная папка.</returns>
     public static string SetFolder()
@@ -133,7 +133,7 @@ namespace MidiReader
 
     #region Конструктор
     /// <summary>
-    /// Конструктор TelegramBot инициализирует экземпляр класса TelegramBotClient с указанным токеном.
+    /// Инициализирует экземпляр класса TelegramBotClient с указанным токеном.
     /// </summary>
     /// <param name="token">Токен Telegram-бота.</param>
     public TelegramBot(string token)

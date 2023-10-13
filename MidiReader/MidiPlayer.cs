@@ -3,7 +3,7 @@
 namespace MidiReader
 {
   /// <summary>
-  /// Класс MidiPlayer предоставляет функционал для воспроизведения MIDI-событий.
+  /// Функционал для воспроизведения MIDI-событий.
   /// </summary>
   internal sealed class MidiPlayer
   {

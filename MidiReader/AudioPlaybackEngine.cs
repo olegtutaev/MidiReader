@@ -4,18 +4,18 @@ using NAudio.Wave.SampleProviders;
 namespace MidiReader
 {
   /// <summary>
-  /// Класс AudioPlaybackEngine представляет движок воспроизведения аудио.
+  /// Движок воспроизведения аудио.
   /// </summary>
-  internal sealed class AudioPlaybackEngine
+  public sealed class AudioPlaybackEngine
   {
     private readonly MixingSampleProvider mixer;
     WaveOutEvent outputDevice = new WaveOutEvent();
     private const int sampleRate = 44100;
     private const int channelCount = 2;
-    public static readonly AudioPlaybackEngine Instance = new AudioPlaybackEngine(sampleRate, channelCount);
     private const int latency = 50;
     private const int numberOfBuffers = 4;
-
+    public static readonly AudioPlaybackEngine Instance = new AudioPlaybackEngine(sampleRate, channelCount);
+    
     /// <summary>
     /// Создает новый экземпляр класса AudioPlaybackEngine с заданными параметрами.
     /// </summary>

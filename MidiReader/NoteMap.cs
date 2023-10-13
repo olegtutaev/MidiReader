@@ -1,8 +1,5 @@
 ﻿namespace MidiReader
 {
-  /// <summary>
-  /// Класс NoteMap предоставляет словарь, содержащий соответствие между номерами нот и именами звуковых файлов.
-  /// </summary>
   internal sealed class NoteMap
   {
     /// <summary>

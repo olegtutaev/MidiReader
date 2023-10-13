@@ -1,9 +1,6 @@
-﻿/// <summary>
-/// Класс BotToken предоставляет токен для доступа к боту.
-/// </summary>
-namespace MidiReader
+﻿namespace MidiReader
 {
-  public class BotToken
+  internal sealed class BotToken
   {
     /// <summary>
     /// Токен для доступа к боту.

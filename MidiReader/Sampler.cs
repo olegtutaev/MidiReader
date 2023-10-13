@@ -7,7 +7,7 @@ using Concentus.Structs;
 namespace MidiReader
 {
   /// <summary>
-  /// Класс Sampler предоставляет методы для конвертации Ogg-файла в WAV-файл и изменения тональности звуковых файлов.
+  /// Методы для конвертации Ogg-файла в WAV-файл и пребразования этого WAV-файла в 49 WAV-файлов с разной тональностью (в диапазоне от C1 до C5).
   /// </summary>
   internal sealed class Sampler
   {
