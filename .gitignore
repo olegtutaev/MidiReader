@@ -4,3 +4,4 @@ MidiReaderTests/bin/
 MidiReader/obj/
 MidiReader/bin/
 MidiReader.sln
+MidiReader/BotToken.cs
