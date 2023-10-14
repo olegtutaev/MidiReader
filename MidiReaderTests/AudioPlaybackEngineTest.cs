@@ -3,7 +3,7 @@ namespace MidiReaderTests
   public class Tests
   {
     [Test]
-    public void PlaySound_ValidFileName_Success()
+    public void PlaySound_MixerIsNotEmpty()
     {
       // Arrange
       string fileName = "C3.wav";
